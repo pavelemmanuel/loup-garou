@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Loups-Garous de Thiercelieux",
+    "slug": "loup-garou-local",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#070913",
+    "primaryColor": "#E11D48",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.loupgarou.local",
+      "infoPlist": {
+        "NSLocalNetworkUsageDescription": "Les Loups-Garous de Thiercelieux uses your local Wi-Fi or Hotspot network to connect players in the same room without internet."
+      }
+    },
+    "android": {
+      "package": "com.loupgarou.local",
+      "adaptiveIcon": {
+        "backgroundColor": "#070913"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    }
+  }
+}

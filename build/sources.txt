@@ -1,0 +1,2 @@
+android-native/src/com/loupgarou/local/MainActivity.java
+build/generated/com/loupgarou/local/R.java

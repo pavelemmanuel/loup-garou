@@ -1,0 +1,6 @@
+build/classes/com/loupgarou/local/MainActivity$1.class
+build/classes/com/loupgarou/local/MainActivity.class
+build/classes/com/loupgarou/local/R$style.class
+build/classes/com/loupgarou/local/R$string.class
+build/classes/com/loupgarou/local/R.class
+build/classes/com/loupgarou/local/R$drawable.class
