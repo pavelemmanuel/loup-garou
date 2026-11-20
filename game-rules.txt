@@ -1,0 +1,479 @@
+1. Objectif du jeu
+Il existe deux camps principaux :
+
+
+
+
+
+
+
+
+
+
+Les Loups-Garous
+
+Ils doivent éliminer les villageois jusqu'à devenir aussi nombreux qu'eux, ou plus nombreux.
+
+
+
+
+
+
+
+
+
+
+
+Les Villageois
+
+Ils doivent identifier et éliminer tous les loups-garous.
+
+
+Chaque joueur reçoit secrètement une carte personnage. Il ne doit pas révéler sa carte, sauf si une règle ou un effet particulier le permet.
+
+Un joueur éliminé ne participe plus aux discussions, aux votes ou aux actions de la partie.
+2. Nombre de joueurs et matériel
+Élément	Règle
+Joueurs	8 à 18
+Meneur de jeu	1 personne, normalement non-joueuse
+Âge recommandé	10 ans et plus
+Durée indicative	30 minutes
+Cartes	24 cartes de jeu
+
+Le matériel de la boîte classique comprend :
+- 4 cartes Loups-Garous.
+- 13 cartes Simples Villageois.
+- 1 carte Voyante.
+- 1 carte Voleur.
+- 1 carte Chasseur.
+- 1 carte Cupidon.
+- 1 carte Sorcière.
+- 1 carte Petite Fille.
+- 1 carte Capitaine (selon la présentation de l'édition, cette carte sert à matérialiser la fonction et n'est pas un personnage distribué).
+Attention : le nombre de loups et la composition des personnages distribués dépendent du nombre de participants.
+3. Tous les personnages du jeu de base
+Voici les pouvoirs de chaque personnage.
+A. Les Loups-Garous
+
+
+
+
+
+
+
+
+
+
+Camp : Loups-Garous
+- Se réveillent chaque nuit.
+- Se reconnaissent entre eux.
+- Choisissent collectivement une victime.
+- Désignent leur victime silencieusement.
+- Ne peuvent pas se dévorer entre eux.
+- Doivent faire croire pendant la journée qu'ils sont de simples villageois.
+Objectif : éliminer tous les villageois.
+B. Le Simple Villageois
+
+
+
+
+
+
+
+
+
+
+Camp : Villageois
+- N'a aucun pouvoir particulier.
+- Ne se réveille pas pendant la nuit.
+- Participe aux discussions.
+- Vote pour éliminer les suspects.
+Objectif : identifier et éliminer les loups-garous.
+C. La Voyante
+
+
+
+
+
+
+
+
+
+
+Camp : Villageois
+- Se réveille chaque nuit.
+- Désigne un joueur.
+- Le meneur lui montre secrètement la véritable carte de ce joueur.
+- Elle peut donc découvrir si un joueur est un loup-garou ou un autre personnage.
+Elle doit utiliser ses informations pour aider le village sans révéler trop tôt son identité.
+D. La Sorcière
+
+
+
+
+
+
+
+
+
+
+Camp : Villageois
+
+Elle possède deux potions utilisables une seule fois chacune pendant toute la partie :
+Potion	Effet
+Potion de guérison	Sauve la victime des loups-garous
+Potion d'empoisonnement	Tue le joueur de son choix
+
+Règles importantes :
+- Le meneur lui montre la victime des loups-garous chaque nuit.
+- Elle peut décider de ne pas utiliser de potion.
+- Elle peut utiliser les deux potions pendant la même nuit.
+- Elle peut se sauver elle-même avec sa potion de guérison.
+- Une potion utilisée ne peut jamais être récupérée.
+Une nuit peut donc se terminer avec zéro, une ou deux victimes.
+E. Le Chasseur
+
+
+
+
+
+
+
+
+
+
+Camp : Villageois
+
+Lorsque le Chasseur meurt, quelle que soit la cause prévue par la règle, il peut immédiatement tirer sur un autre joueur.
+- Il choisit librement sa cible.
+- Sa victime est immédiatement éliminée.
+- Si cette victime est un Amoureux, l'autre Amoureux meurt également.
+- Son pouvoir intervient avant que le jeu continue normalement.
+F. Cupidon
+
+
+
+
+
+
+
+
+
+
+Camp : Villageois
+
+Cupidon agit uniquement pendant la première nuit.
+
+Il désigne deux joueurs qui deviennent Amoureux.
+
+Règles :
+1. Il peut choisir deux autres joueurs.
+2. Il peut se désigner lui-même comme l'un des deux Amoureux.
+3. Les deux Amoureux se réveillent ensuite et se reconnaissent.
+4. Ils ne découvrent pas automatiquement leurs cartes respectives.
+5. Si l'un meurt, l'autre meurt immédiatement de chagrin.
+6. Un Amoureux ne peut jamais voter contre son partenaire ni lui porter préjudice.
+Cas particulier très important :
+
+Si Cupidon lie un Loup-Garou et un Villageois, les deux Amoureux constituent une équipe indépendante.
+
+Ils doivent éliminer tous les autres joueurs, loups comme villageois, pour gagner.
+G. La Petite Fille
+
+
+
+
+
+
+
+
+
+
+Camp : Villageois
+- Peut espionner les loups-garous pendant leur réveil nocturne.
+- Peut entrouvrir les yeux discrètement.
+- N'est pas obligée de le faire.
+- Ne doit pas ouvrir complètement les yeux ni se faire passer pour un loup.
+Si les loups-garous la surprennent, ils peuvent changer leur choix de victime et la tuer immédiatement à la place de leur victime initiale.
+H. Le Voleur
+
+
+
+
+
+
+
+
+
+
+Camp : dépend de la carte choisie
+
+Le Voleur intervient uniquement pendant la première nuit.
+
+Mise en place :
+- Ajouter deux cartes supplémentaires, normalement deux Simples Villageois.
+- Après distribution, placer ces deux cartes au centre de la table, face cachée.
+Pendant la première nuit :
+1. Le Voleur se réveille.
+2. Il regarde secrètement les deux cartes.
+3. Il peut échanger sa carte contre l'une des deux cartes disponibles.
+4. Il devient alors le personnage choisi et conserve ce rôle jusqu'à la fin.
+Règle obligatoire : si les deux cartes supplémentaires sont des Loups-Garous, le Voleur doit prendre l'une des deux.
+I. Le Capitaine (Maire)
+
+
+
+
+
+
+
+
+
+
+Fonction : pouvoir politique supplémentaire
+
+Le Capitaine n'est pas un rôle secret ordinaire : il est élu parmi les joueurs et conserve sa carte personnage.
+
+Ses pouvoirs :
+- Sa voix compte double lors des votes.
+- Il peut être un Loup-Garou ou un Villageois.
+- S'il meurt, il désigne son successeur avant de mourir.
+- Le successeur hérite immédiatement de la fonction.
+Il est élu à la majorité relative : le joueur qui obtient le plus de voix devient Capitaine.
+
+4. Mise en place de la partie
+Étape 1 : désigner le meneur
+
+Un joueur est désigné pour diriger la partie. Il ne joue normalement pas et connaît les rôles de tous les participants.
+
+Étape 2 : choisir les personnages
+
+Le meneur sélectionne les cartes adaptées au nombre de joueurs.
+
+Étape 3 : distribuer les cartes
+- Chaque joueur reçoit une carte face cachée.
+- Il regarde son personnage sans le montrer.
+- Il replace sa carte devant lui, face cachée.
+- Personne ne doit révéler sa véritable identité.
+Étape 4 : débuter la nuit
+
+Le meneur annonce :
+
+« Le village s'endort. Tout le monde ferme les yeux. »
+
+Tous les joueurs ferment les yeux et baissent la tête.
+5. Déroulement exact de la première nuit
+La première nuit est particulière, car elle comprend les actions de préparation.
+Ordre des réveils
+1. Le Voleur
+   
+   Il regarde les deux cartes supplémentaires et peut échanger sa carte.
+2. Cupidon
+   
+   Il désigne deux Amoureux.
+3. Les Amoureux
+   
+   Ils se réveillent, se reconnaissent et se rendorment.
+4. La Voyante
+   
+   Elle découvre la véritable identité d'un joueur.
+5. Les Loups-Garous
+   
+   Ils se reconnaissent et choisissent une victime. La Petite Fille peut espionner.
+6. La Sorcière
+   
+   Elle découvre la victime et décide éventuellement d'utiliser ses potions.
+7. Le village se réveille
+   
+   Le meneur annonce les victimes.
+
+À noter : si un personnage n'est pas présent dans la partie, son appel est simplement ignoré.
+6. Déroulement des nuits suivantes
+À partir de la deuxième nuit, le cycle est plus simple :
+1. Le village s'endort.
+2. La Voyante se réveille et sonde un joueur.
+3. Les Loups-Garous se réveillent et choisissent une victime.
+4. La Petite Fille peut espionner.
+5. La Sorcière se réveille et décide éventuellement d'utiliser ses potions.
+6. Le village se réveille.
+7. Le meneur annonce les morts et applique les éventuels pouvoirs déclenchés.
+Les personnages éliminés ne se réveillent plus et n'utilisent plus leurs pouvoirs.
+7. Déroulement exact de la journée
+
+
+
+
+
+
+
+
+
+
+Lorsque le village se réveille :
+Étape 1 : annonce des victimes
+Le meneur annonce les joueurs morts pendant la nuit.
+- Les victimes révèlent leur carte.
+- Elles sont définitivement éliminées.
+- Elles ne peuvent plus participer aux discussions.
+- Elles ne peuvent plus voter.
+- Elles ne peuvent plus communiquer avec les joueurs vivants, même par gestes.
+Si un joueur possède un pouvoir déclenché par sa mort, celui-ci est immédiatement appliqué.
+Étape 2 : discussion
+Tous les joueurs vivants discutent librement.
+
+Ils peuvent :
+- Accuser quelqu'un.
+- Se défendre.
+- Mentir.
+- Dire la vérité.
+- Prétendre posséder un rôle spécial.
+- Révéler leurs informations.
+- Essayer de convaincre les autres joueurs.
+Il n'existe pas d'obligation de dire la vérité.
+Étape 3 : vote du village
+Le meneur annonce le début du vote.
+- Chaque joueur vivant désigne un joueur à éliminer.
+- Chaque joueur ne dispose normalement que d'un vote.
+- Le Capitaine possède deux voix.
+- Le joueur ayant obtenu le plus de voix est éliminé.
+Étape 4 : égalité des votes
+Si plusieurs joueurs obtiennent le même nombre de voix :
+1. Si le Capitaine est vivant et que son vote peut départager les candidats, il désigne la victime.
+2. Sinon, un deuxième vote est organisé entre les joueurs à égalité.
+3. Les joueurs concernés participent également à ce deuxième vote.
+4. Si l'égalité persiste, personne n'est éliminé.
+Étape 5 : nouvelle nuit
+Après l'élimination, le village s'endort et un nouveau cycle commence.
+
+8. Règles particulières et cas importants
+Voici les situations qu'il faut absolument connaître pour éviter les disputes pendant une partie.
+Situation	Conséquence
+Un Loup-Garou est attaqué par les autres Loups-Garous	Impossible de le dévorer
+Un Amoureux meurt	L'autre meurt immédiatement
+Un Amoureux est éliminé par le village	Son partenaire meurt également
+Le Chasseur meurt	Il élimine immédiatement un joueur
+Le Chasseur tue un Amoureux	L'autre Amoureux meurt également
+Le Capitaine meurt	Il choisit son successeur
+La Sorcière utilise sa guérison	La victime des loups est sauvée
+La Sorcière utilise son poison	Le joueur choisi meurt
+Les Loups-Garous ne parviennent pas à choisir	Aucune victime cette nuit
+La Petite Fille est découverte	Elle est tuée à la place de la victime des loups
+Le Voleur choisit un nouveau rôle	Il conserve ce nouveau rôle jusqu'à la fin
+
+Quelques précisions :
+- Une personne morte ne peut pas revenir dans la partie avec la potion de guérison : celle-ci doit être utilisée avant l'annonce du décès, pendant la phase de la Sorcière.
+- La Sorcière ne peut utiliser chaque potion qu'une seule fois.
+- Le Voleur ne peut effectuer son échange qu'au premier tour nocturne.
+- Les Amoureux doivent se protéger mutuellement, même si cela implique de protéger un Loup-Garou.
+- Les joueurs peuvent mentir sur leur identité pendant toute la partie.
+9. Conditions de victoire
+Il existe trois possibilités de victoire.
+
+
+
+
+
+
+
+
+
+
+Victoire des Loups-Garous
+
+Ils gagnent lorsque tous les Villageois sont éliminés.
+
+
+
+
+
+
+
+
+
+
+Victoire des Villageois
+
+Ils gagnent dès que le dernier Loup-Garou est éliminé.
+
+
+
+
+
+
+
+
+
+
+Victoire des Amoureux mixtes
+
+Si les deux Amoureux sont un Loup-Garou et un Villageois, ils gagnent en éliminant tous les autres joueurs.
+10. Répartition des personnages selon le nombre de joueurs
+Voici la répartition simplifiée recommandée dans la règle classique :
+Joueurs	Loups-Garous	Voyante	Simples Villageois
+8	2	1	5
+9	2	1	6
+10	2	1	7
+11	2	1	8
+12	3	1	8
+13	3	1	9
+14	3	1	10
+15	3	1	11
+16	3	1	12
+17	3	1	13
+18	3	1	14
+
+Cette répartition concerne les parties simplifiées, sans les autres personnages spéciaux.
+
+Pour intégrer les personnages spéciaux, il faut remplacer des cartes de Simple Villageois par les cartes spéciales correspondantes, sans modifier le nombre total de joueurs.
+11. Règles et comportement du meneur de jeu
+Le meneur est essentiel au bon déroulement de la partie.
+
+Il doit respecter plusieurs principes :
+1. Ne jamais révéler accidentellement l'identité d'un personnage.
+2. Parler suffisamment fort pour que tous entendent les instructions.
+3. Ne pas diriger sa voix uniquement vers le personnage appelé.
+4. Effectuer les gestes discrètement.
+5. Respecter l'ordre de réveil des personnages.
+6. Ne pas laisser les joueurs morts communiquer avec les vivants.
+7. Ne pas influencer les décisions des joueurs.
+8. Annoncer les victimes sans donner d'informations supplémentaires.
+9. Appliquer les pouvoirs immédiatement lorsqu'ils se déclenchent.
+10. Vérifier les conditions de victoire après les éliminations et les effets en chaîne.
+
+12. Fiche récapitulative pour organiser une partie
+Ordre complet des actions
+Première nuit
+1. Village endormi.
+2. Voleur.
+3. Cupidon.
+4. Amoureux.
+5. Voyante.
+6. Loups-Garous et Petite Fille.
+7. Sorcière.
+8. Réveil du village.
+9. Annonce des victimes.
+10. Application des pouvoirs déclenchés.
+11. Discussion.
+12. Vote.
+13. Élimination et effets éventuels.
+    
+    Nuits suivantes
+14. Village endormi.
+15. Voyante.
+16. Loups-Garous et Petite Fille.
+17. Sorcière.
+18. Réveil du village.
+19. Annonce des victimes.
+20. Application des pouvoirs déclenchés.
+21. Discussion.
+22. Vote.
+23. Élimination et effets éventuels.
+24. Vérification de la victoire.
+25. Nouvelle nuit si la partie continue.
+
+Sources et documents de référence
+Les règles ci-dessus sont fondées principalement sur le livret de la boîte classique :
+- Règles de la boîte de base – édition Lui-même / Asmodée : personnages, pouvoirs, distribution, déroulement et conditions de victoire.
+- Document PDF des règles du jeu.
+- Livret de règles avec les phases de jeu détaillées.
+Attention concernant le caractère exhaustif : cette liste couvre le jeu de base classique, pas toutes les extensions. Il existe notamment Nouvelle Lune, Le Village, Personnages et Le Pacte, avec de nombreux rôles, événements et mécanismes supplémentaires.

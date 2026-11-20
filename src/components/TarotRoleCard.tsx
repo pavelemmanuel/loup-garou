@@ -1,11 +1,10 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path, Polygon } from 'react-native-svg';
+import { Animated, Easing, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ROLES } from '../data/rolesData';
 import { Language, RoleId } from '../engine/types';
 import { TRANSLATIONS } from '../i18n/translations';
-import { RoleArtwork } from './RoleArtwork';
+import { CARD_BACK_IMAGE, RoleArtwork } from './RoleArtwork';
 
 interface TarotRoleCardProps {
   role: RoleId;
@@ -92,40 +91,23 @@ export const TarotRoleCard: React.FC<TarotRoleCardProps> = ({
             colors={['#171128', '#0D0A1A', '#261220']}
             style={styles.cardInner}
           >
-            {/* Sealed Wax & Occult Moon Back of Tarot Card */}
+            {/* Official Loup-Garou Card Back */}
             <View style={styles.cardCornerTL} />
             <View style={styles.cardCornerTR} />
             <View style={styles.cardCornerBL} />
             <View style={styles.cardCornerBR} />
 
-            <Svg width={136} height={136} viewBox="0 0 120 120">
-              <Circle
-                cx="60"
-                cy="60"
-                r="52"
-                fill="none"
-                stroke="#D97706"
-                strokeWidth="2"
-                strokeDasharray="4 4"
-              />
-              <Circle
-                cx="60"
-                cy="60"
-                r="40"
-                fill="#1E1B4B"
-                stroke="#F59E0B"
-                strokeWidth="1.5"
-              />
-              {/* Wolf Paw & Crescent Emblem */}
-              <Path
-                d="M72 34 A22 22 0 1 0 72 86 A16 16 0 1 1 72 34 Z"
-                fill="#FDE047"
-              />
-              <Polygon
-                points="55,48 58,56 66,56 60,61 62,69 55,64 48,69 50,61 44,56 52,56"
-                fill="#E11D48"
-              />
-            </Svg>
+            <Image
+              source={CARD_BACK_IMAGE}
+              style={{
+                width: compact ? 104 : 138,
+                height: compact ? 104 : 138,
+                borderRadius: 16,
+                borderWidth: 1.5,
+                borderColor: '#D97706',
+              }}
+              resizeMode="cover"
+            />
 
             {playerName && (
               <Text style={styles.sealedPlayerName}>{playerName}</Text>

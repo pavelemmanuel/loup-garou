@@ -19,6 +19,7 @@ import {
   applyBodyguardProtection,
   applyCupidLovers,
   applyHunterShot,
+  applyInfectFatherDecision,
   applyMayorSuccessor,
   applyRavenCurse,
   applyThiefChoice,
@@ -36,17 +37,7 @@ import { ActiveGameView } from './src/screens/ActiveGameView';
 
 const STORAGE_KEY_PLAYERS = '@loupgarou_players_v1';
 const STORAGE_KEY_LANG = '@loupgarou_lang_v1';
-
-const DEFAULT_VILLAGERS = [
-  'Camille',
-  'Lucas',
-  'Léa',
-  'Hugo',
-  'Chloé',
-  'Antoine',
-  'Manon',
-  'Thomas',
-];
+const MIN_PLAYERS = 4;
 
 export default function App() {
   const [lang, setLang] = useState<Language>('fr');
@@ -56,13 +47,13 @@ export default function App() {
   // Lobby mode: 'pass' (single device) or 'lan' (local Wi-Fi room)
   const [mode, setMode] = useState<'pass' | 'lan'>('pass');
 
-  // Players list for Pass & Play
-  const [playerNames, setPlayerNames] = useState<string[]>(DEFAULT_VILLAGERS);
+  // Players list for Pass & Play (starts empty; user adds villagers freely)
+  const [playerNames, setPlayerNames] = useState<string[]>([]);
   const [newPlayerInput, setNewPlayerInput] = useState<string>('');
 
   // Role composition counts
   const [rolesCount, setRolesCount] = useState<Record<RoleId, number>>(() =>
-    getRecommendedRoles(DEFAULT_VILLAGERS.length)
+    getRecommendedRoles(0)
   );
   const [includeMayor, setIncludeMayor] = useState<boolean>(true);
   const [discussionSeconds, setDiscussionSeconds] = useState<number>(180);
@@ -92,9 +83,13 @@ export default function App() {
         const savedPlayers = await AsyncStorage.getItem(STORAGE_KEY_PLAYERS);
         if (savedPlayers) {
           const parsed = JSON.parse(savedPlayers);
-          if (Array.isArray(parsed) && parsed.length >= 4) {
-            setPlayerNames(parsed);
-            setRolesCount(getRecommendedRoles(parsed.length));
+          if (Array.isArray(parsed)) {
+            const validNames = parsed.filter(
+              (item): item is string =>
+                typeof item === 'string' && item.trim().length > 0
+            );
+            setPlayerNames(validNames);
+            setRolesCount(getRecommendedRoles(validNames.length));
           }
         }
       } catch {
@@ -133,7 +128,6 @@ export default function App() {
   };
 
   const handleRemovePlayer = (index: number) => {
-    if (playerNames.length <= 4) return;
     soundFX.triggerHaptic('light');
     const next = playerNames.filter((_, idx) => idx !== index);
     persistPlayers(next);
@@ -143,6 +137,12 @@ export default function App() {
   const handleAdjustRoleCount = (roleId: RoleId, delta: number) => {
     soundFX.triggerHaptic('light');
     setRolesCount((prev) => {
+      if (roleId === 'two_sisters') {
+        return {
+          ...prev,
+          two_sisters: delta > 0 ? 2 : 0,
+        };
+      }
       const current = prev[roleId] || 0;
       const maxForRole =
         roleId === 'villager' || roleId === 'werewolf' ? 12 : 1;
@@ -156,10 +156,7 @@ export default function App() {
 
   const handleAutoBalanceRoles = () => {
     soundFX.playCardFlip();
-    const count =
-      mode === 'lan' && lanMembers.length >= 4
-        ? lanMembers.length
-        : playerNames.length;
+    const count = mode === 'lan' ? lanMembers.length : playerNames.length;
     setRolesCount(getRecommendedRoles(count));
   };
 
@@ -197,6 +194,7 @@ export default function App() {
         else if (a.kind === 'raven') updated = applyRavenCurse(match, a.targetId);
         else if (a.kind === 'seer') updated = inspectPlayerWithSeer(match, a.targetId);
         else if (a.kind === 'werewolf') updated = applyWerewolvesTarget(match, a.targetId);
+        else if (a.kind === 'infect_father') updated = applyInfectFatherDecision(match, a.infect);
         else if (a.kind === 'white_wolf') updated = applyWhiteWolfTarget(match, a.targetId);
         else if (a.kind === 'witch')
           updated = applyWitchDecision(match, {
@@ -263,10 +261,16 @@ export default function App() {
     }
   };
 
+  // Total cards summary
+  const activePlayerCount =
+    mode === 'lan' ? lanMembers.length : playerNames.length;
+  const canStartMatch = activePlayerCount >= MIN_PLAYERS;
+
   const handleStartMatch = () => {
+    if (!canStartMatch) return;
     soundFX.playWolfHowl();
     const roster =
-      mode === 'lan' && lanMembers.length >= 4
+      mode === 'lan'
         ? lanMembers.map((m, i) => ({
             id: m.id,
             name: m.name,
@@ -311,11 +315,6 @@ export default function App() {
     }
   };
 
-  // Total cards summary
-  const activePlayerCount =
-    mode === 'lan' && lanMembers.length >= 4
-      ? lanMembers.length
-      : playerNames.length;
   const totalDeckCards = Object.values(rolesCount).reduce((a, b) => a + b, 0);
   const hasThief = (rolesCount.thief || 0) > 0;
   const requiredDeckCards = activePlayerCount + (hasThief ? 2 : 0);
@@ -454,17 +453,21 @@ export default function App() {
                   <Text style={styles.playerChipText}>
                     {idx + 1}. {name}
                   </Text>
-                  {playerNames.length > 4 && (
-                    <Pressable
-                      onPress={() => handleRemovePlayer(idx)}
-                      style={styles.removeChipBtn}
-                    >
-                      <Text style={styles.removeChipText}>✕</Text>
-                    </Pressable>
-                  )}
+                  <Pressable
+                    onPress={() => handleRemovePlayer(idx)}
+                    style={styles.removeChipBtn}
+                  >
+                    <Text style={styles.removeChipText}>✕</Text>
+                  </Pressable>
                 </View>
               ))}
             </View>
+
+            {playerNames.length < MIN_PLAYERS && (
+              <Text style={styles.minPlayersWarningText}>
+                ⚠️ {t.minPlayersWarning}
+              </Text>
+            )}
           </View>
         ) : (
           /* LOCAL WI-FI / HOTSPOT MULTI-DEVICE ROOM PANEL */
@@ -586,6 +589,13 @@ export default function App() {
                     ]}
                   >
                     <RoleArtwork role={roleId} size={56} />
+                    {def.isExpansion && (
+                      <View style={styles.extensionPill}>
+                        <Text style={styles.extensionPillText}>
+                          {t.extensionBadge}
+                        </Text>
+                      </View>
+                    )}
                     <Text
                       numberOfLines={1}
                       style={[
@@ -663,11 +673,27 @@ export default function App() {
             </View>
 
             {/* Launch Game Button */}
+            {!canStartMatch && (
+              <Text style={styles.minPlayersWarningText}>
+                ⚠️ {t.minPlayersWarning}
+              </Text>
+            )}
             <Pressable
               onPress={handleStartMatch}
-              style={styles.primaryCta}
+              disabled={!canStartMatch}
+              style={[
+                styles.primaryCta,
+                !canStartMatch && styles.primaryCtaDisabled,
+              ]}
             >
-              <Text style={styles.primaryCtaText}>🌕 {t.startMatchBtn}</Text>
+              <Text
+                style={[
+                  styles.primaryCtaText,
+                  !canStartMatch && styles.primaryCtaTextDisabled,
+                ]}
+              >
+                🌕 {t.startMatchBtn}
+              </Text>
             </Pressable>
           </View>
         )}
@@ -896,6 +922,20 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     textAlign: 'center',
   },
+  extensionPill: {
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 99,
+    borderWidth: 1,
+    borderColor: '#F59E0B',
+    backgroundColor: 'rgba(245, 158, 11, 0.16)',
+  },
+  extensionPillText: {
+    color: '#FDE68A',
+    fontSize: 9,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
   stepperRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -975,11 +1015,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.45,
     shadowRadius: 12,
   },
+  primaryCtaDisabled: {
+    backgroundColor: '#334155',
+    shadowOpacity: 0,
+    opacity: 0.7,
+  },
   primaryCtaText: {
     color: '#FFFFFF',
     fontSize: 15.5,
     fontWeight: '900',
     letterSpacing: 1.1,
+  },
+  primaryCtaTextDisabled: {
+    color: '#94A3B8',
+  },
+  minPlayersWarningText: {
+    color: '#FACC15',
+    fontSize: 12.5,
+    fontWeight: '700',
   },
   secondaryCta: {
     backgroundColor: '#1E293B',

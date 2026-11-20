@@ -8,18 +8,20 @@ import {
   View,
 } from 'react-native';
 import { soundFX } from '../audio/soundFX';
-import { RoleArtwork } from '../components/RoleArtwork';
+import { MayorArtwork, RoleArtwork } from '../components/RoleArtwork';
 import { TarotRoleCard } from '../components/TarotRoleCard';
 import { VillageSkyBackdrop } from '../components/VillageSkyBackdrop';
 import { VillagerSelectionGrid } from '../components/VillagerSelectionGrid';
 import { ROLES, ROLE_ORDER, getRecommendedRoles } from '../data/rolesData';
 import {
   acknowledgeLoversPhase,
+  acknowledgeTwoSistersPhase,
   advanceAfterSeer,
   advanceFromRoleDistribution,
   applyBodyguardProtection,
   applyCupidLovers,
   applyHunterShot,
+  applyInfectFatherDecision,
   applyMayorSuccessor,
   applyRavenCurse,
   applyThiefChoice,
@@ -67,6 +69,7 @@ interface ActiveGameViewProps {
       | { kind: 'raven'; targetId: string | null }
       | { kind: 'seer'; targetId: string }
       | { kind: 'werewolf'; targetId: string }
+      | { kind: 'infect_father'; infect: boolean }
       | { kind: 'white_wolf'; targetId: string | null }
       | { kind: 'witch'; useHeal: boolean; poisonTargetId: string | null }
       | { kind: 'hunter'; targetId: string }
@@ -171,6 +174,8 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
         return 'thief';
       case 'NIGHT_CUPID':
         return 'cupid';
+      case 'NIGHT_TWO_SISTERS':
+        return 'two_sisters';
       case 'NIGHT_BODYGUARD':
         return 'bodyguard';
       case 'NIGHT_RAVEN':
@@ -179,6 +184,8 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
         return 'seer';
       case 'NIGHT_WEREWOLVES':
         return 'werewolf';
+      case 'NIGHT_INFECT_FATHER':
+        return 'infect_father';
       case 'NIGHT_WHITE_WOLF':
         return 'white_wolf';
       case 'NIGHT_WITCH':
@@ -217,6 +224,7 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
       (match.phase === 'NIGHT_RAVEN' && localPlayer.role === 'raven') ||
       (match.phase === 'NIGHT_SEER' && localPlayer.role === 'seer') ||
       (match.phase === 'NIGHT_WEREWOLVES' && isWerewolfCamp(localPlayer.role)) ||
+      (match.phase === 'NIGHT_INFECT_FATHER' && localPlayer.role === 'infect_father') ||
       (match.phase === 'NIGHT_WHITE_WOLF' && localPlayer.role === 'white_wolf') ||
       (match.phase === 'NIGHT_WITCH' && localPlayer.role === 'witch');
 
@@ -253,12 +261,54 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
               <Text style={styles.panelTitle}>
                 {t.wakeUpCall(ROLES[localPlayer.role].name[lang])}
               </Text>
+              {match.phase === 'NIGHT_INFECT_FATHER' ? (
+                <View style={{ gap: 10 }}>
+                  <Text style={styles.subtitleText}>{t.infectFatherPrompt}</Text>
+                  <Text style={styles.witchVictimName}>
+                    🩸{' '}
+                    {
+                      match.players.find(
+                        (p) => p.id === match.night.werewolfTargetId
+                      )?.name
+                    }
+                  </Text>
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={styles.secondaryBtn}
+                      onPress={() =>
+                        onSendLanClientAction({ kind: 'infect_father', infect: false })
+                      }
+                    >
+                      <Text style={styles.secondaryBtnText}>
+                        {t.infectFatherSkipBtn}
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.primaryBtn, { flex: 1, backgroundColor: '#BE123C' }]}
+                      onPress={() =>
+                        onSendLanClientAction({ kind: 'infect_father', infect: true })
+                      }
+                    >
+                      <Text style={styles.primaryBtnText}>
+                        {t.infectFatherUseBtn}
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ) : (
+              <>
               <VillagerSelectionGrid
                 players={match.players}
                 selectedIds={selectedIds}
                 disabledIds={
                   match.phase === 'NIGHT_BODYGUARD' && match.night.lastBodyguardTargetId
                     ? [match.night.lastBodyguardTargetId]
+                    : match.phase === 'NIGHT_WEREWOLVES'
+                    ? match.players
+                        .filter((p) => isWerewolfCamp(p.role))
+                        .map((p) => p.id)
+                    : match.phase === 'NIGHT_SEER'
+                    ? [localPlayer.id]
                     : []
                 }
                 onTogglePlayer={
@@ -308,6 +358,8 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
                   <Text style={styles.primaryBtnText}>{t.confirmActionBtn}</Text>
                 </Pressable>
               )}
+              </>
+              )}
             </View>
           )}
 
@@ -317,6 +369,7 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
               <VillagerSelectionGrid
                 players={match.players}
                 selectedIds={selectedIds}
+                disabledIds={localPlayer.loverId ? [localPlayer.loverId] : []}
                 onTogglePlayer={toggleSelectOne}
                 lang={lang}
               />
@@ -616,6 +669,39 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
           </View>
         )}
 
+        {/* NIGHT: TWO SISTERS (LES DEUX SŒURS) */}
+        {match.phase === 'NIGHT_TWO_SISTERS' && (
+          <View style={styles.panelCard}>
+            <View style={{ alignItems: 'center', marginBottom: 8 }}>
+              <RoleArtwork role="two_sisters" size={88} />
+            </View>
+            <Text style={styles.screenHeading}>{t.twoSistersWakeTitle}</Text>
+            <Text style={styles.subtitleText}>{t.twoSistersWakeSub}</Text>
+
+            <View style={styles.actorsChipRow}>
+              {match.players
+                .filter((p) => p.alive && p.role === 'two_sisters')
+                .map((sister) => (
+                  <View
+                    key={sister.id}
+                    style={[styles.actorChip, { borderColor: '#F59E0B' }]}
+                  >
+                    <Text style={styles.actorChipText}>
+                      👯‍♀️ {sister.name}
+                    </Text>
+                  </View>
+                ))}
+            </View>
+
+            <Pressable
+              style={[styles.primaryBtn, { backgroundColor: '#D97706' }]}
+              onPress={() => onUpdateMatch(acknowledgeTwoSistersPhase(match))}
+            >
+              <Text style={styles.primaryBtnText}>{t.awakenNextRoleBtn}</Text>
+            </Pressable>
+          </View>
+        )}
+
         {/* NIGHT: BODYGUARD (LE SALVATEUR) */}
         {match.phase === 'NIGHT_BODYGUARD' && nightRoleAwake && (
           <View style={styles.panelCard}>
@@ -798,6 +884,9 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
             <VillagerSelectionGrid
               players={match.players}
               selectedIds={selectedIds}
+              disabledIds={match.players
+                .filter((p) => isWerewolfCamp(p.role))
+                .map((p) => p.id)}
               onTogglePlayer={toggleSelectOne}
               lang={lang}
               accentColor={ROLES.werewolf.accentColor}
@@ -819,6 +908,52 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
             >
               <Text style={styles.primaryBtnText}>🩸 {t.confirmActionBtn}</Text>
             </Pressable>
+          </View>
+        )}
+
+        {/* NIGHT: INFECT PÈRE DES LOUPS */}
+        {match.phase === 'NIGHT_INFECT_FATHER' && nightRoleAwake && (
+          <View style={styles.panelCard}>
+            <Text style={[styles.panelTitle, { color: '#FB7185' }]}>
+              🦠 {ROLES.infect_father.name[lang]}
+            </Text>
+            <Text style={styles.subtitleText}>{t.infectFatherPrompt}</Text>
+
+            <View style={styles.witchVictimBox}>
+              <Text style={styles.witchSectionLabel}>
+                {t.infectFatherVictimLabel}
+              </Text>
+              <Text style={styles.witchVictimName}>
+                🩸{' '}
+                {
+                  match.players.find(
+                    (p) => p.id === match.night.werewolfTargetId
+                  )?.name
+                }
+              </Text>
+            </View>
+
+            <View style={styles.actionRow}>
+              <Pressable
+                style={styles.secondaryBtn}
+                onPress={() => onUpdateMatch(applyInfectFatherDecision(match, false))}
+              >
+                <Text style={styles.secondaryBtnText}>
+                  {t.infectFatherSkipBtn}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[styles.primaryBtn, { flex: 1, backgroundColor: '#BE123C' }]}
+                onPress={() => {
+                  soundFX.playWolfHowl();
+                  onUpdateMatch(applyInfectFatherDecision(match, true));
+                }}
+              >
+                <Text style={styles.primaryBtnText}>
+                  {t.infectFatherUseBtn}
+                </Text>
+              </Pressable>
+            </View>
           </View>
         )}
 
@@ -870,7 +1005,7 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
             {/* Victim display & Elixir of Life */}
             <View style={styles.witchVictimBox}>
               <Text style={styles.witchSectionLabel}>{t.witchVictimLabel}</Text>
-              {match.night.werewolfTargetId ? (
+              {match.night.werewolfTargetId && !match.night.infectVictim ? (
                 <Text style={styles.witchVictimName}>
                   🩸{' '}
                   {
@@ -883,7 +1018,9 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
                 <Text style={styles.subtitleText}>{t.witchNoVictim}</Text>
               )}
 
-              {match.witchPotions.healAvailable && match.night.werewolfTargetId ? (
+              {match.witchPotions.healAvailable &&
+              match.night.werewolfTargetId &&
+              !match.night.infectVictim ? (
                 <Pressable
                   onPress={() => {
                     soundFX.playPotionBubbles();
@@ -1035,7 +1172,9 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
         {/* INTERRUPT: MAYOR SUCCESSION */}
         {match.phase === 'MAYOR_SUCCESSION' && (
           <View style={styles.panelCard}>
-            <Text style={styles.bigEmoji}>👑</Text>
+            <View style={{ alignItems: 'center', marginBottom: 8 }}>
+              <MayorArtwork size={88} />
+            </View>
             <Text style={styles.screenHeading}>{t.mayorSuccessionTitle}</Text>
             <Text style={styles.subtitleText}>
               {t.mayorSuccessionSub(
@@ -1074,7 +1213,9 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
         {/* DAY 1: MAYOR / CAPTAIN ELECTION */}
         {match.phase === 'MAYOR_ELECTION' && (
           <View style={styles.panelCard}>
-            <Text style={styles.bigEmoji}>👑</Text>
+            <View style={{ alignItems: 'center', marginBottom: 8 }}>
+              <MayorArtwork size={88} />
+            </View>
             <Text style={styles.screenHeading}>{t.mayorElectionTitle}</Text>
             <Text style={styles.subtitleText}>{t.mayorElectionSub}</Text>
 
@@ -1179,33 +1320,41 @@ export const ActiveGameView: React.FC<ActiveGameViewProps> = ({
             />
 
             <View style={styles.actionRow}>
-              <Pressable
-                style={styles.secondaryBtn}
-                onPress={() => onUpdateMatch(resolveVillageVote(match, null))}
-              >
-                <Text style={styles.secondaryBtnText}>
-                  {t.noExecutionTieBtn}
-                </Text>
-              </Pressable>
-
-              <Pressable
-                disabled={selectedIds.length !== 1}
-                style={[
-                  styles.primaryBtn,
-                  { flex: 1, backgroundColor: '#EA580C' },
-                  selectedIds.length !== 1 && styles.btnDisabled,
-                ]}
-                onPress={() => {
-                  if (selectedIds[0]) {
+              {Object.keys(match.votes).length > 0 && selectedIds.length === 0 ? (
+                <Pressable
+                  style={[
+                    styles.primaryBtn,
+                    { flex: 1, backgroundColor: '#EA580C' },
+                  ]}
+                  onPress={() => {
                     soundFX.triggerHaptic('heavy');
-                    onUpdateMatch(resolveVillageVote(match, selectedIds[0]));
-                  }
-                }}
-              >
-                <Text style={styles.primaryBtnText}>
-                  🔥 {t.executeSuspectBtn}
-                </Text>
-              </Pressable>
+                    onUpdateMatch(resolveVillageVote(match));
+                  }}
+                >
+                  <Text style={styles.primaryBtnText}>
+                    🔥 {t.executeSuspectBtn}
+                  </Text>
+                </Pressable>
+              ) : (
+                <Pressable
+                  disabled={selectedIds.length !== 1}
+                  style={[
+                    styles.primaryBtn,
+                    { flex: 1, backgroundColor: '#EA580C' },
+                    selectedIds.length !== 1 && styles.btnDisabled,
+                  ]}
+                  onPress={() => {
+                    if (selectedIds[0]) {
+                      soundFX.triggerHaptic('heavy');
+                      onUpdateMatch(resolveVillageVote(match, selectedIds[0]));
+                    }
+                  }}
+                >
+                  <Text style={styles.primaryBtnText}>
+                    🔥 {t.executeSuspectBtn}
+                  </Text>
+                </Pressable>
+              )}
             </View>
           </View>
         )}

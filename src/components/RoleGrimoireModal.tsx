@@ -51,6 +51,13 @@ export const RoleGrimoireModal: React.FC<RoleGrimoireModalProps> = ({
                   <View style={styles.roleInfo}>
                     <View style={styles.titleRow}>
                       <Text style={styles.roleName}>{def.name[lang]}</Text>
+                      {def.isExpansion && (
+                        <View style={styles.extensionBadge}>
+                          <Text style={styles.extensionBadgeText}>
+                            {t.extensionBadge}
+                          </Text>
+                        </View>
+                      )}
                       <View
                         style={[
                           styles.campBadge,
@@ -164,6 +171,19 @@ const styles = StyleSheet.create({
   campText: {
     fontSize: 10,
     fontWeight: '800',
+  },
+  extensionBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 99,
+    borderWidth: 1,
+    borderColor: '#F59E0B',
+    backgroundColor: 'rgba(245, 158, 11, 0.16)',
+  },
+  extensionBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#FDE68A',
   },
   tagline: {
     fontSize: 12,

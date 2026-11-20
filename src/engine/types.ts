@@ -4,6 +4,7 @@ export type RoleId =
   | 'villager'
   | 'werewolf'
   | 'white_wolf'
+  | 'infect_father'
   | 'seer'
   | 'witch'
   | 'hunter'
@@ -13,13 +14,17 @@ export type RoleId =
   | 'thief'
   | 'elder'
   | 'idiot'
-  | 'raven';
+  | 'raven'
+  | 'rusty_knight'
+  | 'two_sisters'
+  | 'bear_tamer';
 
 export type CampId = 'village' | 'werewolves' | 'white_wolf' | 'lovers';
 
 export interface RoleDefinition {
   id: RoleId;
   camp: 'village' | 'werewolves' | 'white_wolf';
+  isExpansion?: boolean;
   accentColor: string;
   secondaryColor: string;
   nightOrder: number | null; // null if passive at night
@@ -52,10 +57,12 @@ export type GamePhase =
   | 'NIGHT_THIEF'
   | 'NIGHT_CUPID'
   | 'NIGHT_LOVERS'
+  | 'NIGHT_TWO_SISTERS'
   | 'NIGHT_BODYGUARD'
   | 'NIGHT_RAVEN'
   | 'NIGHT_SEER'
   | 'NIGHT_WEREWOLVES'
+  | 'NIGHT_INFECT_FATHER'
   | 'NIGHT_WHITE_WOLF'
   | 'NIGHT_WITCH'
   | 'DAWN_ANNOUNCEMENT'
@@ -78,7 +85,7 @@ export interface ChronicleEvent {
 
 export interface PendingDeath {
   playerId: string;
-  reason: 'werewolves' | 'white_wolf' | 'witch_poison' | 'vote' | 'hunter' | 'heartbreak';
+  reason: 'werewolves' | 'white_wolf' | 'witch_poison' | 'vote' | 'hunter' | 'heartbreak' | 'rusty_sword';
 }
 
 export interface NightState {
@@ -90,6 +97,7 @@ export interface NightState {
   seerRevealedRole: RoleId | null;
   werewolfTargetId: string | null;
   werewolfVotes: Record<string, string>; // voterId -> targetId
+  infectVictim?: boolean;
   whiteWolfTargetId: string | null;
   witchSaved: boolean;
   witchPoisonTargetId: string | null;
@@ -113,6 +121,8 @@ export interface MatchState {
     healAvailable: boolean;
     poisonAvailable: boolean;
   };
+  infectPowerAvailable: boolean; // Once per game for Infect Père des Loups
+  pendingRustySwordTargetId: string | null; // Werewolf wounded by Rusty Knight, dies next dawn
   elderPowerLost: boolean; // True if Elder dies by village vote, Hunter, or Witch poison
   night: NightState;
   dawnDeaths: PendingDeath[];

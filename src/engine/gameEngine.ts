@@ -20,6 +20,7 @@ function createFreshNightState(lastBodyguardTargetId: string | null = null): Nig
     seerRevealedRole: null,
     werewolfTargetId: null,
     werewolfVotes: {},
+    infectVictim: false,
     whiteWolfTargetId: null,
     witchSaved: false,
     witchPoisonTargetId: null,
@@ -36,7 +37,7 @@ function shuffleArray<T>(items: T[], rng: () => number = Math.random): T[] {
 }
 
 export function isWerewolfCamp(role: RoleId): boolean {
-  return role === 'werewolf' || role === 'white_wolf';
+  return role === 'werewolf' || role === 'white_wolf' || role === 'infect_father';
 }
 
 export function createMatch(
@@ -46,7 +47,10 @@ export function createMatch(
 ): MatchState {
   const deck: RoleId[] = [];
   for (const roleId of ROLE_ORDER) {
-    const count = config.rolesCount[roleId] || 0;
+    let count = config.rolesCount[roleId] || 0;
+    if (roleId === 'two_sisters' && count > 0) {
+      count = 2;
+    }
     for (let i = 0; i < count; i++) {
       deck.push(roleId);
     }
@@ -120,6 +124,8 @@ export function createMatch(
       healAvailable: true,
       poisonAvailable: true,
     },
+    infectPowerAvailable: true,
+    pendingRustySwordTargetId: null,
     elderPowerLost: false,
     night: createFreshNightState(null),
     dawnDeaths: [],
@@ -144,10 +150,12 @@ export function getNextNightPhase(state: MatchState, afterPhase: GamePhase): Gam
     'NIGHT_THIEF',
     'NIGHT_CUPID',
     'NIGHT_LOVERS',
+    'NIGHT_TWO_SISTERS',
     'NIGHT_BODYGUARD',
     'NIGHT_RAVEN',
     'NIGHT_SEER',
     'NIGHT_WEREWOLVES',
+    'NIGHT_INFECT_FATHER',
     'NIGHT_WHITE_WOLF',
     'NIGHT_WITCH',
   ];
@@ -175,6 +183,12 @@ export function shouldRunNightPhase(state: MatchState, phase: GamePhase): boolea
       return state.turn === 1 && !state.elderPowerLost && hasAliveRole('cupid');
     case 'NIGHT_LOVERS':
       return state.turn === 1 && alivePlayers.some((p) => p.loverId !== null);
+    case 'NIGHT_TWO_SISTERS':
+      return (
+        state.turn === 1 &&
+        !state.elderPowerLost &&
+        alivePlayers.filter((p) => p.role === 'two_sisters').length >= 2
+      );
     case 'NIGHT_BODYGUARD':
       return !state.elderPowerLost && hasAliveRole('bodyguard');
     case 'NIGHT_RAVEN':
@@ -183,12 +197,18 @@ export function shouldRunNightPhase(state: MatchState, phase: GamePhase): boolea
       return !state.elderPowerLost && hasAliveRole('seer');
     case 'NIGHT_WEREWOLVES':
       return alivePlayers.some((p) => isWerewolfCamp(p.role));
+    case 'NIGHT_INFECT_FATHER':
+      return (
+        state.infectPowerAvailable &&
+        hasAliveRole('infect_father') &&
+        !!state.night.werewolfTargetId
+      );
     case 'NIGHT_WHITE_WOLF':
       // Official rule: White Werewolf wakes up alone every other night (Night 2, 4, 6...)
       return (
         state.turn % 2 === 0 &&
         hasAliveRole('white_wolf') &&
-        alivePlayers.some((p) => p.role === 'werewolf')
+        alivePlayers.some((p) => p.role === 'werewolf' || p.role === 'infect_father')
       );
     case 'NIGHT_WITCH':
       return (
@@ -328,6 +348,14 @@ export function acknowledgeLoversPhase(state: MatchState): MatchState {
   return { ...state, phase: nextPhase, activeNightActorIndex: 0 };
 }
 
+export function acknowledgeTwoSistersPhase(state: MatchState): MatchState {
+  const nextPhase = getNextNightPhase(state, 'NIGHT_TWO_SISTERS');
+  if (nextPhase === 'DAWN_ANNOUNCEMENT') {
+    return resolveDawn(state);
+  }
+  return { ...state, phase: nextPhase, activeNightActorIndex: 0 };
+}
+
 /**
  * Bodyguard (Salvateur) action: protect one living player (cannot be same as lastBodyguardTargetId).
  */
@@ -400,8 +428,14 @@ export function advanceAfterSeer(state: MatchState): MatchState {
 
 /**
  * Werewolves pack target selection.
+ * Rule: Werewolves cannot devour each other.
  */
 export function applyWerewolvesTarget(state: MatchState, targetId: string): MatchState {
+  const target = state.players.find((p) => p.id === targetId);
+  if (!target || !target.alive || isWerewolfCamp(target.role)) {
+    return state;
+  }
+
   const nextState: MatchState = {
     ...state,
     night: {
@@ -410,6 +444,28 @@ export function applyWerewolvesTarget(state: MatchState, targetId: string): Matc
     },
   };
   const nextPhase = getNextNightPhase(nextState, 'NIGHT_WEREWOLVES');
+  if (nextPhase === 'DAWN_ANNOUNCEMENT') {
+    return resolveDawn(nextState);
+  }
+  return { ...nextState, phase: nextPhase, activeNightActorIndex: 0 };
+}
+
+/**
+ * Infect Père des Loups (Accursed Wolf-Father) decision:
+ * Once per game, infect the Werewolves' victim instead of devouring them so they become a Werewolf.
+ */
+export function applyInfectFatherDecision(state: MatchState, infect: boolean): MatchState {
+  const canInfect = infect && state.infectPowerAvailable && !!state.night.werewolfTargetId;
+  const nextState: MatchState = {
+    ...state,
+    infectPowerAvailable: canInfect ? false : state.infectPowerAvailable,
+    night: {
+      ...state.night,
+      infectVictim: canInfect,
+    },
+  };
+
+  const nextPhase = getNextNightPhase(nextState, 'NIGHT_INFECT_FATHER');
   if (nextPhase === 'DAWN_ANNOUNCEMENT') {
     return resolveDawn(nextState);
   }
@@ -441,7 +497,11 @@ export function applyWitchDecision(
   state: MatchState,
   opts: { useHeal: boolean; poisonTargetId: string | null }
 ): MatchState {
-  const useHeal = opts.useHeal && state.witchPotions.healAvailable && !!state.night.werewolfTargetId;
+  const useHeal =
+    opts.useHeal &&
+    state.witchPotions.healAvailable &&
+    !!state.night.werewolfTargetId &&
+    !state.night.infectVictim;
   const poisonTargetId =
     opts.poisonTargetId && state.witchPotions.poisonAvailable ? opts.poisonTargetId : null;
 
@@ -475,6 +535,7 @@ export function resolveDawn(state: MatchState): MatchState {
   const dawnDeaths: PendingDeath[] = [];
   const chronicles = [...state.chronicles];
   let elderPowerLost = state.elderPowerLost;
+  let nextPendingRustySwordTargetId: string | null = null;
 
   const addDeath = (playerId: string, reason: PendingDeath['reason']) => {
     const p = players.find((x) => x.id === playerId);
@@ -498,6 +559,29 @@ export function resolveDawn(state: MatchState): MatchState {
     }
   };
 
+  // 0. Resolve delayed Rusty Sword (tetanus) death from previous night
+  if (state.pendingRustySwordTargetId) {
+    const woundedWolf = players.find((p) => p.id === state.pendingRustySwordTargetId);
+    if (woundedWolf && woundedWolf.alive) {
+      addDeath(woundedWolf.id, 'rusty_sword');
+      chronicles.unshift({
+        id: `rusty_tetanus_${state.turn}_${Date.now()}`,
+        turn: state.turn,
+        timeOfDay: 'day',
+        icon: '🗡️',
+        title: {
+          fr: 'Le Tétanos de l’Épée Rouillée',
+          en: 'The Rusty Sword’s Curse',
+        },
+        detail: {
+          fr: `Blessé la veille par le Chevalier à l’Épée Rouillée, ${woundedWolf.name} succombe à ses blessures.`,
+          en: `Wounded the previous night by the Knight with the Rusty Sword, ${woundedWolf.name} succumbs to tetanus.`,
+        },
+        highlightColor: '#B45309',
+      });
+    }
+  }
+
   // 1. Resolve Werewolf attack
   const wolfVictimId = state.night.werewolfTargetId;
   if (wolfVictimId) {
@@ -507,7 +591,11 @@ export function resolveDawn(state: MatchState): MatchState {
     if (!protectedByBodyguard && !savedByWitch) {
       const victim = players.find((p) => p.id === wolfVictimId);
       if (victim && victim.alive) {
-        if (victim.role === 'elder' && victim.elderLives > 1) {
+        if (state.night.infectVictim) {
+          // Infect Père des Loups: victim survives and secretly joins the Werewolves!
+          victim.role = 'werewolf';
+          victim.elderLives = 1;
+        } else if (victim.role === 'elder' && victim.elderLives > 1) {
           // Elder survives first werewolf bite!
           victim.elderLives -= 1;
           chronicles.unshift({
@@ -527,6 +615,35 @@ export function resolveDawn(state: MatchState): MatchState {
           });
         } else {
           addDeath(victim.id, 'werewolves');
+
+          // Rusty Knight retaliation: wounds first living werewolf to his left (dies next night)
+          if (victim.role === 'rusty_knight' && !elderPowerLost) {
+            const knightIdx = players.findIndex((p) => p.id === victim.id);
+            if (knightIdx !== -1) {
+              for (let offset = 1; offset < players.length; offset++) {
+                const candidate = players[(knightIdx + offset) % players.length];
+                if (candidate.alive && isWerewolfCamp(candidate.role)) {
+                  nextPendingRustySwordTargetId = candidate.id;
+                  chronicles.unshift({
+                    id: `rusty_wound_${state.turn}_${Date.now()}`,
+                    turn: state.turn,
+                    timeOfDay: 'day',
+                    icon: '⚔️',
+                    title: {
+                      fr: 'Lame Rouillée du Chevalier',
+                      en: 'The Knight’s Rusty Blade',
+                    },
+                    detail: {
+                      fr: 'En tombant, le Chevalier à l’Épée Rouillée a blessé un Loup-Garou à sa gauche ! Ce loup succombera la nuit prochaine.',
+                      en: 'As he fell, the Knight with the Rusty Sword wounded a Werewolf to his left! That wolf will perish next night.',
+                    },
+                    highlightColor: '#B45309',
+                  });
+                  break;
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -565,6 +682,37 @@ export function resolveDawn(state: MatchState): MatchState {
         },
         highlightColor: '#6366F1',
       });
+    }
+  }
+
+  // Bear Tamer (Montreur d'Ours) morning growl check
+  if (!elderPowerLost) {
+    const aliveList = players.filter((p) => p.alive);
+    const bearTamerIdx = aliveList.findIndex((p) => p.role === 'bear_tamer');
+    if (bearTamerIdx !== -1 && aliveList.length >= 2) {
+      const leftNeighbor =
+        aliveList[(bearTamerIdx - 1 + aliveList.length) % aliveList.length];
+      const rightNeighbor = aliveList[(bearTamerIdx + 1) % aliveList.length];
+      if (
+        isWerewolfCamp(leftNeighbor.role) ||
+        isWerewolfCamp(rightNeighbor.role)
+      ) {
+        chronicles.unshift({
+          id: `bear_growl_${state.turn}_${Date.now()}`,
+          turn: state.turn,
+          timeOfDay: 'day',
+          icon: '🐻',
+          title: {
+            fr: 'L’Ours Grogne !',
+            en: 'The Bear Growls!',
+          },
+          detail: {
+            fr: 'L’ours du Montreur d’Ours grogne bruyamment ! Au moins un de ses voisins directs est un Loup-Garou.',
+            en: 'The Bear Tamer’s bear growls loudly! At least one of his immediate living neighbors is a Werewolf.',
+          },
+          highlightColor: '#EA580C',
+        });
+      }
     }
   }
 
@@ -632,6 +780,7 @@ export function resolveDawn(state: MatchState): MatchState {
     phase: 'DAWN_ANNOUNCEMENT',
     players,
     elderPowerLost,
+    pendingRustySwordTargetId: nextPendingRustySwordTargetId,
     dawnDeaths,
     pendingHunterIds,
     pendingMayorSuccessionFromId: deadMayor ? deadMayor.id : null,
@@ -871,6 +1020,12 @@ export function castVillageVote(
   const voter = state.players.find((p) => p.id === voterId);
   if (!voter || !voter.alive || !voter.canVote) return state;
 
+  // Rule: A Lover can never vote against their partner
+  if (voter.loverId && voter.loverId === targetId) return state;
+
+  const target = state.players.find((p) => p.id === targetId);
+  if (!target || !target.alive) return state;
+
   return {
     ...state,
     votes: {
@@ -883,6 +1038,7 @@ export function castVillageVote(
 /**
  * Tallies the village vote (including Mayor's 2x vote weight and Raven's +2 penalty votes)
  * or executes a direct chosen suspect (`directTargetId`).
+ * Rule: A player must be eliminated even in case of a tie.
  */
 export function resolveVillageVote(
   state: MatchState,
@@ -890,7 +1046,7 @@ export function resolveVillageVote(
 ): MatchState {
   let condemnedId: string | null = directTargetId ?? null;
 
-  if (condemnedId === undefined) {
+  if (directTargetId === undefined || directTargetId === null) {
     const tally: Record<string, number> = {};
     // Add Raven's +2 penalty curses
     for (const p of state.players) {
@@ -901,7 +1057,8 @@ export function resolveVillageVote(
 
     for (const [voterId, targetId] of Object.entries(state.votes)) {
       const voter = state.players.find((p) => p.id === voterId);
-      if (voter && voter.alive && voter.canVote) {
+      // Enforce that a Lover's vote against their partner is never counted
+      if (voter && voter.alive && voter.canVote && voter.loverId !== targetId) {
         const weight = voter.isMayor ? 2 : 1;
         tally[targetId] = (tally[targetId] || 0) + weight;
       }
@@ -927,8 +1084,13 @@ export function resolveVillageVote(
       if (mayorChoice && topCandidates.includes(mayorChoice)) {
         condemnedId = mayorChoice;
       } else {
-        condemnedId = null; // Tie with no mayor tie-break -> no execution
+        // Mandatory elimination on tie: eliminate one of the tied top candidates
+        condemnedId = topCandidates[0];
       }
+    } else {
+      // If no votes were cast at all, fallback to first alive player to guarantee elimination
+      const firstAlive = state.players.find((p) => p.alive);
+      condemnedId = firstAlive ? firstAlive.id : null;
     }
   }
 
@@ -1104,7 +1266,9 @@ export function checkVictoryCondition(state: MatchState): MatchState {
     }
   }
 
-  const aliveWolves = alive.filter((p) => p.role === 'werewolf');
+  const aliveWolves = alive.filter(
+    (p) => p.role === 'werewolf' || p.role === 'infect_father'
+  );
   const aliveWhiteWolf = alive.filter((p) => p.role === 'white_wolf');
   const aliveVillagers = alive.filter((p) => !isWerewolfCamp(p.role));
 
@@ -1130,14 +1294,20 @@ export function checkVictoryCondition(state: MatchState): MatchState {
     };
   }
 
-  // 4. Werewolves victory: no villagers left AND no White Werewolf left to betray them
-  if (aliveVillagers.length === 0 && aliveWhiteWolf.length === 0 && aliveWolves.length > 0) {
+  // 4. Werewolves victory: Werewolves are at least as numerous as non-werewolf villagers
+  // (and White Werewolf is not alive to contest them alone)
+  if (
+    aliveWolves.length > 0 &&
+    aliveWhiteWolf.length === 0 &&
+    aliveWolves.length >= aliveVillagers.length
+  ) {
+    // Special case: if 1 Wolf and 1 Villager remain and they are Lovers, handled in step 1 above.
     return {
       ...state,
       phase: 'GAME_OVER',
       winner: 'werewolves',
       winnerPlayerIds: state.players
-        .filter((p) => p.role === 'werewolf')
+        .filter((p) => p.role === 'werewolf' || p.role === 'infect_father')
         .map((p) => p.id),
     };
   }

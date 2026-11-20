@@ -31,6 +31,7 @@ export type LanPacket =
         | { kind: 'raven'; targetId: string | null }
         | { kind: 'seer'; targetId: string }
         | { kind: 'werewolf'; targetId: string }
+        | { kind: 'infect_father'; infect: boolean }
         | { kind: 'white_wolf'; targetId: string | null }
         | { kind: 'witch'; useHeal: boolean; poisonTargetId: string | null }
         | { kind: 'hunter'; targetId: string }

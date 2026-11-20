@@ -45,6 +45,8 @@ export interface Translations {
   cupidPrompt: string;
   loversWakeTitle: string;
   loversWakeSub: string;
+  twoSistersWakeTitle: string;
+  twoSistersWakeSub: string;
   bodyguardPrompt: string;
   bodyguardCannotRepeat: string;
   ravenPrompt: string;
@@ -55,6 +57,11 @@ export interface Translations {
   littleGirlPeekBtn: string;
   littleGirlPeekResult: (clue: string) => string;
   whiteWolfPrompt: string;
+  infectFatherPrompt: string;
+  infectFatherVictimLabel: string;
+  infectFatherUseBtn: string;
+  infectFatherSkipBtn: string;
+  extensionBadge: string;
   witchVictimLabel: string;
   witchNoVictim: string;
   witchUseHealBtn: string;
@@ -160,6 +167,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     cupidPrompt: 'Sélectionnez 2 joueurs pour les unir par les flèches de l’Amour :',
     loversWakeTitle: 'Les Amoureux se reconnaissent',
     loversWakeSub: 'Vos destins sont liés : si l’un de vous meurt, l’autre meurt aussitôt de chagrin.',
+    twoSistersWakeTitle: 'Les Deux Sœurs se reconnaissent',
+    twoSistersWakeSub: 'Vous êtes sœurs et toutes deux du camp du Village. Vous pouvez vous faire confiance !',
     bodyguardPrompt: 'Choisissez un joueur à protéger contre les Loups cette nuit :',
     bodyguardCannotRepeat: 'Protégé la nuit dernière (indisponible)',
     ravenPrompt: 'Désignez un suspect qui recevra +2 voix contre lui au vote de demain :',
@@ -170,6 +179,11 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     littleGirlPeekBtn: '👧 Espionner la meute (Petite Fille)',
     littleGirlPeekResult: (clue) => `Murmure dans l’ombre : ${clue}`,
     whiteWolfPrompt: 'Nuit du Loup Blanc : voulez-vous dévorer un Loup-Garou en secret ?',
+    infectFatherPrompt: 'Pouvoir unique de l’Infect Père des Loups : voulez-vous infecter la victime des Loups pour la rallier à la meute ?',
+    infectFatherVictimLabel: 'Proie choisie par les Loups :',
+    infectFatherUseBtn: '🦠 Infecter (Devient Loup-Garou)',
+    infectFatherSkipBtn: 'Dévorer normalement',
+    extensionBadge: 'Extension',
     witchVictimLabel: 'Cible des Loups-Garous cette nuit :',
     witchNoVictim: 'Personne n’a été mordu par les Loups.',
     witchUseHealBtn: '🧪 Utiliser l’Élixir de Vie (Sauver)',
@@ -273,6 +287,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     cupidPrompt: 'Select 2 players to bind together with Cupid’s golden arrows:',
     loversWakeTitle: 'The Lovers Recognize Each Other',
     loversWakeSub: 'Your fates are intertwined: if one of you dies, the other dies of heartbreak.',
+    twoSistersWakeTitle: 'The Two Sisters Recognize Each Other',
+    twoSistersWakeSub: 'You are sisters and both belong to the Village. You can trust each other!',
     bodyguardPrompt: 'Choose one player to shield from Werewolf attacks tonight:',
     bodyguardCannotRepeat: 'Protected last night (unavailable)',
     ravenPrompt: 'Select a suspect to curse with +2 penalty votes tomorrow:',
@@ -283,6 +299,11 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     littleGirlPeekBtn: '👧 Peek from the shadows (Little Girl)',
     littleGirlPeekResult: (clue) => `Whisper in the dark: ${clue}`,
     whiteWolfPrompt: 'White Wolf’s Ambush: will you secretly devour a fellow Werewolf?',
+    infectFatherPrompt: 'Accursed Wolf-Father’s one-time power: infect the Wolves’ victim to turn them into a Werewolf?',
+    infectFatherVictimLabel: 'Prey chosen by the pack:',
+    infectFatherUseBtn: '🦠 Infect (Turn into Werewolf)',
+    infectFatherSkipBtn: 'Devour Normally',
+    extensionBadge: 'Expansion',
     witchVictimLabel: 'Werewolves’ target tonight:',
     witchNoVictim: 'Nobody was bitten by the Werewolves.',
     witchUseHealBtn: '🧪 Use Elixir of Life (Save Victim)',

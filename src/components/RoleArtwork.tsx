@@ -1,4 +1,5 @@
 import React from 'react';
+import { Image, ImageSourcePropType, View } from 'react-native';
 import Svg, {
   Circle,
   Defs,
@@ -14,19 +15,83 @@ import Svg, {
 import { ROLES } from '../data/rolesData';
 import { RoleId } from '../engine/types';
 
+export const ROLE_IMAGES: Partial<Record<RoleId, ImageSourcePropType>> = {
+  werewolf: require('../../assets/roles/werewolf.png'),
+  villager: require('../../assets/roles/villager.png'),
+  seer: require('../../assets/roles/seer.png'),
+  witch: require('../../assets/roles/witch.png'),
+  hunter: require('../../assets/roles/hunter.png'),
+  cupid: require('../../assets/roles/cupid.png'),
+  little_girl: require('../../assets/roles/little_girl.png'),
+  white_wolf: require('../../assets/roles/white_wolf.webp'),
+  elder: require('../../assets/roles/elder.webp'),
+  idiot: require('../../assets/roles/idiot.webp'),
+  thief: require('../../assets/roles/thief.png'),
+  infect_father: require('../../assets/roles/infect_father.webp'),
+  rusty_knight: require('../../assets/roles/rusty_knight.webp'),
+  two_sisters: require('../../assets/roles/two_sisters.webp'),
+  bear_tamer: require('../../assets/roles/bear_tamer.webp'),
+};
+
+export const CARD_BACK_IMAGE: ImageSourcePropType = require('../../assets/roles/card_back.png');
+export const CAPITAINE_IMAGE: ImageSourcePropType = require('../../assets/roles/capitaine.png');
+
+export const MayorArtwork: React.FC<{ size?: number }> = ({ size = 110 }) => (
+  <View
+    style={{
+      width: size,
+      height: size,
+      borderRadius: size * 0.16,
+      overflow: 'hidden',
+      borderWidth: 2,
+      borderColor: '#FACC15',
+      backgroundColor: '#0B0F1D',
+    }}
+  >
+    <Image
+      source={CAPITAINE_IMAGE}
+      style={{ width: '100%', height: '100%' }}
+      resizeMode="cover"
+    />
+  </View>
+);
+
 interface RoleArtworkProps {
   role: RoleId;
   size?: number;
 }
 
 /**
- * Custom hand-crafted Dark Fantasy / Tarot SVG illustrations for each of the 13 roles
- * of Les Loups-Garous de Thiercelieux.
+ * Displays the official character card artwork when available,
+ * falling back to hand-crafted SVG illustrations for roles without an image (bodyguard, raven).
  */
 export const RoleArtwork: React.FC<RoleArtworkProps> = ({ role, size = 140 }) => {
   const def = ROLES[role];
   const accent = def.accentColor;
   const secondary = def.secondaryColor;
+  const imageSource = ROLE_IMAGES[role];
+
+  if (imageSource) {
+    return (
+      <View
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size * 0.16,
+          overflow: 'hidden',
+          borderWidth: 2,
+          borderColor: accent,
+          backgroundColor: '#070913',
+        }}
+      >
+        <Image
+          source={imageSource}
+          style={{ width: '100%', height: '100%' }}
+          resizeMode="cover"
+        />
+      </View>
+    );
+  }
 
   return (
     <Svg width={size} height={size} viewBox="0 0 120 120">

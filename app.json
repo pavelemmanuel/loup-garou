@@ -4,6 +4,7 @@
     "slug": "loup-garou-local",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#070913",
     "primaryColor": "#E11D48",
@@ -17,12 +18,14 @@
     "android": {
       "package": "com.loupgarou.local",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#070913"
       }
     },
     "web": {
       "bundler": "metro",
-      "output": "single"
+      "output": "single",
+      "favicon": "./assets/favicon.png"
     }
   }
 }

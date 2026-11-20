@@ -14,6 +14,10 @@ export const ROLE_ORDER: RoleId[] = [
   'idiot',
   'raven',
   'thief',
+  'infect_father',
+  'rusty_knight',
+  'two_sisters',
+  'bear_tamer',
 ];
 
 export const ROLES: Record<RoleId, RoleDefinition> = {
@@ -331,6 +335,107 @@ export const ROLES: Record<RoleId, RoleDefinition> = {
       en: 'Nail your anonymous poster on a suspect’s door (+2 penalty votes tomorrow).',
     },
   },
+
+  infect_father: {
+    id: 'infect_father',
+    camp: 'werewolves',
+    isExpansion: true,
+    accentColor: '#BE123C',
+    secondaryColor: '#4C0519',
+    nightOrder: 7.5,
+    name: {
+      fr: 'Infect Père des Loups',
+      en: 'Accursed Wolf-Father',
+    },
+    tagline: {
+      fr: 'Sa morsure transforme la proie en prédateur',
+      en: 'His bite turns prey into a fellow predator',
+    },
+    description: {
+      fr: 'Personnage d’extension. Il se réveille chaque nuit avec les Loups-Garous. Une fois par partie, il peut infecter la victime des Loups : celle-ci ne meurt pas et rejoint secrètement le camp des Loups-Garous.',
+      en: 'Expansion character. Wakes up each night with the Werewolves. Once per game, he can infect the Wolves’ victim: the victim survives and secretly becomes a Werewolf.',
+    },
+    powerPrompt: {
+      fr: 'Une fois par partie, choisissez d’infecter la victime des Loups pour la rallier à votre meute.',
+      en: 'Once per game, choose to infect the Wolves’ victim to turn them into a Werewolf.',
+    },
+  },
+
+  rusty_knight: {
+    id: 'rusty_knight',
+    camp: 'village',
+    isExpansion: true,
+    accentColor: '#B45309',
+    secondaryColor: '#451A03',
+    nightOrder: null,
+    name: {
+      fr: 'Chevalier à l’Épée Rouillée',
+      en: 'Knight with the Rusty Sword',
+    },
+    tagline: {
+      fr: 'Une blessure rouillée qui condamne son bourreau',
+      en: 'A rusted blade that dooms his attacker',
+    },
+    description: {
+      fr: 'Personnage d’extension. S’il est dévoré par les Loups-Garous, il blesse le premier Loup-Garou situé à sa gauche, qui succombera du tétanos lors de la nuit suivante.',
+      en: 'Expansion character. If devoured by the Werewolves, he wounds the first Werewolf to his left, who will die of tetanus the following night.',
+    },
+    powerPrompt: {
+      fr: 'Si les Loups-Garous vous dévorent, votre lame rouillée condamne le Loup à votre gauche pour la nuit suivante.',
+      en: 'If the Werewolves devour you, your rusty blade dooms the Wolf to your left on the following night.',
+    },
+  },
+
+  two_sisters: {
+    id: 'two_sisters',
+    camp: 'village',
+    isExpansion: true,
+    accentColor: '#F59E0B',
+    secondaryColor: '#78350F',
+    nightOrder: 3.5,
+    firstNightOnly: true,
+    name: {
+      fr: 'Les Deux Sœurs',
+      en: 'The Two Sisters',
+    },
+    tagline: {
+      fr: 'Un lien fraternel forgé dans la nuit',
+      en: 'A sisterly bond forged in the night',
+    },
+    description: {
+      fr: 'Personnage d’extension (requiert exactement 2 cartes). La première nuit, les Deux Sœurs se réveillent ensemble et se reconnaissent : elles savent avec certitude qu’elles sont toutes deux innocentes.',
+      en: 'Expansion character (requires exactly 2 cards). On the first night, the Two Sisters wake up together and recognize each other as trusted allies of the village.',
+    },
+    powerPrompt: {
+      fr: 'Reconnaissez votre sœur dans la nuit : vous savez que vous pouvez vous faire confiance.',
+      en: 'Recognize your sister in the night: you know you can trust each other.',
+    },
+  },
+
+  bear_tamer: {
+    id: 'bear_tamer',
+    camp: 'village',
+    isExpansion: true,
+    accentColor: '#EA580C',
+    secondaryColor: '#7C2D12',
+    nightOrder: null,
+    name: {
+      fr: 'Le Montreur d’Ours',
+      en: 'The Bear Tamer',
+    },
+    tagline: {
+      fr: 'L’instinct de la bête trahit les loups voisins',
+      en: 'The beast’s instinct betrays neighboring wolves',
+    },
+    description: {
+      fr: 'Personnage d’extension. Chaque matin à l’aube, tant qu’il est en vie, si au moins l’un de ses deux voisins directs (à gauche ou à droite) est un Loup-Garou, son ours grogne devant tout le village.',
+      en: 'Expansion character. Each morning at dawn, while alive, if at least one of his two immediate living neighbors is a Werewolf, his bear growls aloud to warn the village.',
+    },
+    powerPrompt: {
+      fr: 'Chaque matin, votre ours grogne si l’un de vos voisins directs est un Loup-Garou.',
+      en: 'Each morning, your bear growls if either of your immediate neighbors is a Werewolf.',
+    },
+  },
 };
 
 /**
@@ -341,6 +446,7 @@ export function getRecommendedRoles(playerCount: number): Record<RoleId, number>
     villager: 0,
     werewolf: 1,
     white_wolf: 0,
+    infect_father: 0,
     seer: 1,
     witch: 0,
     hunter: 0,
@@ -351,6 +457,9 @@ export function getRecommendedRoles(playerCount: number): Record<RoleId, number>
     elder: 0,
     idiot: 0,
     raven: 0,
+    rusty_knight: 0,
+    two_sisters: 0,
+    bear_tamer: 0,
   };
 
   if (playerCount <= 4) {
